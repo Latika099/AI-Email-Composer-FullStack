@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 
 const EmailHistory = () => {
+    const [search, setSearch] = useState("");
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchEmails = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/email", {
-                    headers: {
-                        Authorization: "Bearer " + localStorage.getItem("token"),
-                    },
-                });
+                const res = await fetch(
+                    `http://localhost:5000/api/email?search=${search}`,
+                    {
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("token"),
+                        },
+                    }
+                );
 
                 const data = await res.json();
                 if (data.success) {
@@ -25,13 +29,27 @@ const EmailHistory = () => {
         };
 
         fetchEmails();
-    }, []);
+    }, [search]);
 
     if (loading) return <p>Loading email history...</p>;
 
     return (
         <div style={{ padding: "20px" }}>
             <h2>Email History</h2>
+            <input
+                type="text"
+                placeholder="Search emails..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                    padding: "8px",
+                    width: "100%",
+                    maxWidth: "400px",
+                    marginBottom: "20px",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                }}
+            />
             {emails.length === 0 ? (
                 <p>No emails found.</p>
             ) : (

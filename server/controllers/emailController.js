@@ -111,7 +111,19 @@ Instructions:
 // GET /api/email - Get all emails
 export const getAllEmails = async (req, res) => {
   try {
-    const emails = await Email.find({ userId: req.user.id })
+    const { search } = req.query;
+
+    let query = { userId: req.user.id };
+
+    if (search) {
+      query.$or = [
+        { subject: { $regex: search, $options: "i" } },
+        { generatedContent: { $regex: search, $options: "i" } },
+        { tone: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    const emails = await Email.find(query)
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -126,7 +138,6 @@ export const getAllEmails = async (req, res) => {
     });
   }
 };
-
 
 // POST /api/email - Create new email
 export const createEmail = async (req, res) => {
