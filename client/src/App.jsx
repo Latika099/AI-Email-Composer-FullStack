@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CreateEmail from "./pages/CreateEmail";
 import ProtectedRoute from "./components/ProtectedRoute";
+import EmailHistory from "./pages/EmailHistory";
 
 function App() {
   return (
@@ -13,6 +14,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/email-history"
+          element={
+            <ProtectedRoute>
+              <EmailHistory />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={

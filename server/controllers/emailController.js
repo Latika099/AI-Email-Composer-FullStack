@@ -51,6 +51,23 @@ Instructions:
 - Do not add meta-commentary or explanations—output only the email text.`;
 
     const generatedText = await generateEmailWithGroq(prompt);
+    // Save generated email to database
+    // Extract subject from generated text
+    let subjectLine = "No Subject";
+    const subjectMatch = generatedText.match(/Subject:\s*(.*)/i);
+    if (subjectMatch && subjectMatch[1]) {
+      subjectLine = subjectMatch[1].trim();
+    }
+
+    // Save to database
+    await Email.create({
+      userId: req.user.id,
+      subject: subjectLine,
+      purpose: params.purpose,
+      tone: params.tone,
+      generatedContent: generatedText,
+      status: "final",
+    });
 
     return res.status(200).json({
       success: true,
@@ -94,19 +111,17 @@ Instructions:
 // GET /api/email - Get all emails
 export const getAllEmails = async (req, res) => {
   try {
-    const emails = await Email
-      .find({ userId: req.user.id })
-      .populate("userId", "name email");
+    const emails = await Email.find({ userId: req.user.id })
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
-      count: emails.length,
-      data: emails,
+      emails,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Error fetching emails",
+      message: "Error fetching email history",
       error: error.message,
     });
   }

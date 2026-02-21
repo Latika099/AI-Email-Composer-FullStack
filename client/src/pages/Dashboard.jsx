@@ -28,7 +28,11 @@ const Dashboard = () => {
             >
               Create Email
             </button>
-            <button className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors">
+            <button
+              type="button"
+              onClick={() => navigate("/email-history")}
+              className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors"
+            >
               Email History
             </button>
             <button

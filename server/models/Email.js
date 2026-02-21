@@ -7,52 +7,33 @@ const emailSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    subject: {
-      type: String,
-    },
     purpose: {
       type: String,
+      required: true,
     },
     tone: {
       type: String,
     },
-    recipient: {
+    type: {
       type: String,
     },
-    keyPoints: {
-      type: [String],
-      default: [],
+    length: {
+      type: String,
+    },
+    keywords: {
+      type: String,
     },
     generatedContent: {
       type: String,
-    },
-    status: {
-      type: String,
-      enum: ["draft", "final"],
-      default: "draft",
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-    },
+      required: true
+    }
+    ,
   },
   {
-    timestamps: false, // We're handling createdAt and updatedAt manually
+    timestamps: true,
   }
 );
-
-// Update updatedAt before saving
-emailSchema.pre("save", function () {
-    if (!this.isNew) {
-      this.updatedAt = Date.now();
-    }
-  });
-  
 
 const Email = mongoose.model("Email", emailSchema);
 
 export default Email;
-
