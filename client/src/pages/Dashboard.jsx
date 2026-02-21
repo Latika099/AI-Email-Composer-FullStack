@@ -1,7 +1,40 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  const [stats, setStats] = useState({
+    totalEmails: 0,
+    emailsThisWeek: 0,
+    savedDrafts: 0,
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/email/stats", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          setStats({
+            totalEmails: data.totalEmails,
+            emailsThisWeek: data.emailsThisWeek,
+            savedDrafts: data.savedDrafts,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -18,16 +51,19 @@ const Dashboard = () => {
               AI Email Composer
             </h1>
           </div>
+
           <nav className="space-y-2 flex-1">
             <button className="w-full text-left px-3 py-2 rounded-lg bg-[#EEF3F5] text-[#1F2A37] font-semibold">
               Dashboard
             </button>
+
             <button
               onClick={() => navigate("/create-email")}
               className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors"
             >
               Create Email
             </button>
+
             <button
               type="button"
               onClick={() => navigate("/email-history")}
@@ -35,6 +71,7 @@ const Dashboard = () => {
             >
               Email History
             </button>
+
             <button
               onClick={handleLogout}
               className="w-full text-left px-3 py-2 rounded-lg text-red-500 hover:text-red-600 transition-colors"
@@ -42,9 +79,6 @@ const Dashboard = () => {
               Logout
             </button>
           </nav>
-          <p className="px-2 text-xs text-gray-500 mt-4">
-            Dashboard UI placeholder – backend integration coming later.
-          </p>
         </aside>
 
         {/* Main content */}
@@ -52,11 +86,14 @@ const Dashboard = () => {
           <div className="max-w-7xl mx-auto">
             <header className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-bold text-[#1F2A37]">Welcome back</h2>
+                <h2 className="text-3xl font-bold text-[#1F2A37]">
+                  Welcome back
+                </h2>
                 <p className="text-gray-600 mt-1">
                   Here&apos;s a quick overview of your email activity.
                 </p>
               </div>
+
               <button
                 onClick={() => navigate("/create-email")}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-[#1F2A37] text-white font-medium shadow-md hover:bg-[#111827] transition-colors"
@@ -69,22 +106,32 @@ const Dashboard = () => {
             <section className="grid gap-6 sm:grid-cols-3 mb-8">
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
                 <p className="text-sm text-gray-600 mb-2">Total Emails</p>
-                <p className="text-3xl font-bold text-[#1F2A37]">0</p>
+                <p className="text-3xl font-bold text-[#1F2A37]">
+                  {stats.totalEmails}
+                </p>
               </div>
+
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
-                <p className="text-sm text-gray-600 mb-2">Emails This Week</p>
-                <p className="text-3xl font-bold text-[#1F2A37]">0</p>
+                <p className="text-sm text-gray-600 mb-2">
+                  Emails This Week
+                </p>
+                <p className="text-3xl font-bold text-[#1F2A37]">
+                  {stats.emailsThisWeek}
+                </p>
               </div>
+
               <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
                 <p className="text-sm text-gray-600 mb-2">Saved Drafts</p>
-                <p className="text-3xl font-bold text-[#1F2A37]">0</p>
+                <p className="text-3xl font-bold text-[#1F2A37]">
+                  {stats.savedDrafts}
+                </p>
               </div>
             </section>
 
             <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
               <p className="text-gray-600">
-                Dashboard content placeholder. Add charts, recent activity, and AI
-                insights here later.
+                Analytics connected successfully. More advanced charts and
+                insights can be added next.
               </p>
             </section>
           </div>
@@ -95,5 +142,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-

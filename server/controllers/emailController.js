@@ -265,4 +265,36 @@ export const deleteEmail = async (req, res) => {
     });
   }
 };
+export const getEmailStats = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
+    const totalEmails = await Email.countDocuments({ userId });
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const emailsThisWeek = await Email.countDocuments({
+      userId,
+      createdAt: { $gte: oneWeekAgo }
+    });
+
+    const savedDrafts = await Email.countDocuments({
+      userId,
+      status: "draft"
+    });
+
+    res.status(200).json({
+      success: true,
+      totalEmails,
+      emailsThisWeek,
+      savedDrafts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching stats",
+      error: error.message,
+    });
+  }
+};

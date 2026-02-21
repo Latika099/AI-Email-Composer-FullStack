@@ -8,11 +8,12 @@ import {
   generateEmail,
 } from "../controllers/emailController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-
+import { getEmailStats } from "../controllers/emailController.js";
 const router = express.Router();
 
 // Apply auth middleware to all routes
 router.use(authMiddleware);
+router.get("/stats", getEmailStats);
 
 // GET /api/email - Get all emails
 router.get("/", getAllEmails);
