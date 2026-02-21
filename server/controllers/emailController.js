@@ -111,7 +111,7 @@ Instructions:
 // GET /api/email - Get all emails
 export const getAllEmails = async (req, res) => {
   try {
-    const { search, tone } = req.query;
+    const { search, tone, sort } = req.query;
 
     let query = { userId: req.user.id };
     if (tone) {
@@ -126,8 +126,17 @@ export const getAllEmails = async (req, res) => {
       ];
     }
 
-    const emails = await Email.find(query)
-      .sort({ createdAt: -1 });
+    let sortOption = { createdAt: -1 }; // default: newest first
+
+    if (sort === "oldest") {
+      sortOption = { createdAt: 1 };
+    } else if (sort === "az") {
+      sortOption = { subject: 1 };
+    } else if (sort === "za") {
+      sortOption = { subject: -1 };
+    }
+
+    const emails = await Email.find(query).sort(sortOption);
 
     res.status(200).json({
       success: true,
