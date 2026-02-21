@@ -4,12 +4,13 @@ const EmailHistory = () => {
     const [search, setSearch] = useState("");
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [tone, setTone] = useState("");
 
     useEffect(() => {
         const fetchEmails = async () => {
             try {
                 const res = await fetch(
-                    `http://localhost:5000/api/email?search=${search}`,
+                    `http://localhost:5000/api/email?search=${search}&tone=${tone}`,
                     {
                         headers: {
                             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -29,7 +30,7 @@ const EmailHistory = () => {
         };
 
         fetchEmails();
-    }, [search]);
+    }, [search, tone]);
 
     if (loading) return <p>Loading email history...</p>;
 
@@ -50,6 +51,21 @@ const EmailHistory = () => {
                     border: "1px solid #ccc",
                 }}
             />
+            <select
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+                style={{
+                    padding: "8px",
+                    marginLeft: "10px",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                }}
+            >
+                <option value="">All Tones</option>
+                <option value="friendly">Friendly</option>
+                <option value="formal">Formal</option>
+                <option value="professional">Professional</option>
+            </select>
             {emails.length === 0 ? (
                 <p>No emails found.</p>
             ) : (

@@ -111,9 +111,12 @@ Instructions:
 // GET /api/email - Get all emails
 export const getAllEmails = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, tone } = req.query;
 
     let query = { userId: req.user.id };
+    if (tone) {
+      query.tone = tone;
+    }
 
     if (search) {
       query.$or = [
