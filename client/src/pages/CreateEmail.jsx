@@ -232,7 +232,10 @@ AI Email Composer`;
             <button className="w-full text-left px-3 py-2 rounded-lg bg-[#EEF3F5] text-[#1F2A37] font-semibold">
               Create Email
             </button>
-            <button className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors">
+            <button
+              onClick={() => navigate("/email-history")}
+              className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors"
+            >
               Email History
             </button>
             <button

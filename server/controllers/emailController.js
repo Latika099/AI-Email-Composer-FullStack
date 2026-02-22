@@ -1,6 +1,6 @@
 import Email from "../models/email.js";
 import { generateEmail as generateEmailWithGroq } from "../services/groqService.js";
-
+import ActivityLog from "../models/ActivityLog.js";
 // POST /api/email/generate - Generate email with AI
 export const generateEmail = async (req, res) => {
   console.log("Request received at /api/email/generate");
@@ -60,13 +60,18 @@ Instructions:
     }
 
     // Save to database
-    await Email.create({
+    const newEmail = await Email.create({
       userId: req.user.id,
       subject: subjectLine,
       purpose: params.purpose,
       tone: params.tone,
       generatedContent: generatedText,
       status: "final",
+    });
+    await ActivityLog.create({
+      userId: req.user.id,
+      emailId: newEmail._id,
+      action: "created",
     });
 
     return res.status(200).json({
@@ -255,6 +260,13 @@ export const deleteEmail = async (req, res) => {
       });
     }
 
+    // Log activity only if deletion actually happened
+    await ActivityLog.create({
+      userId: req.user.id,
+      emailId: req.params.id,
+      action: "deleted",
+    });
+
     res.status(200).json({
       success: true,
       message: "Email deleted successfully",
@@ -296,6 +308,27 @@ export const getEmailStats = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching stats",
+      error: error.message,
+    });
+  }
+};
+export const getRecentActivity = async (req, res) => {
+  try {
+    const activities = await ActivityLog.find({
+      userId: req.user.id,
+    })
+      .sort({ timestamp: -1 })
+      .limit(5)
+      .populate("emailId", "subject");
+
+    res.status(200).json({
+      success: true,
+      activities,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching activity",
       error: error.message,
     });
   }

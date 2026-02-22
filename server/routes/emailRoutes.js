@@ -9,6 +9,7 @@ import {
 } from "../controllers/emailController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import { getEmailStats } from "../controllers/emailController.js";
+import { getRecentActivity } from "../controllers/emailController.js";
 const router = express.Router();
 
 // Apply auth middleware to all routes
@@ -23,7 +24,7 @@ router.post("/generate", generateEmail);
 
 // POST /api/email - Create new email
 router.post("/", createEmail);
-
+router.get("/activity", getRecentActivity);
 // GET /api/email/:id - Get single email
 router.get("/:id", getEmailById);
 

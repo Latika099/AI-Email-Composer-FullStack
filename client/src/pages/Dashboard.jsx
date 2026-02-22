@@ -9,7 +9,7 @@ const Dashboard = () => {
     emailsThisWeek: 0,
     savedDrafts: 0,
   });
-
+  const [activities, setActivities] = useState([]);
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -33,7 +33,27 @@ const Dashboard = () => {
       }
     };
 
+    const fetchActivity = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/email/activity", {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          setActivities(data.activities);
+        }
+      } catch (error) {
+        console.error("Error fetching activity:", error);
+      }
+    };
+
     fetchStats();
+    fetchActivity();
+
   }, []);
 
   const handleLogout = () => {
@@ -128,11 +148,28 @@ const Dashboard = () => {
               </div>
             </section>
 
-            <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300">
-              <p className="text-gray-600">
-                Analytics connected successfully. More advanced charts and
-                insights can be added next.
-              </p>
+            <section className="bg-white border border-gray-200 rounded-2xl p-6 shadow-md transition-all duration-300">
+              <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
+
+              {activities.length === 0 ? (
+                <p className="text-gray-500">No recent activity.</p>
+              ) : (
+                activities.map((activity) => (
+                  <div
+                    key={activity._id}
+                    className="border-b border-gray-200 py-2 text-sm"
+                  >
+                    <span className="font-medium">
+                      {activity.action.toUpperCase()}
+                    </span>{" "}
+                    —{" "}
+                    {activity.emailId?.subject || "Email"}{" "}
+                    <span className="text-gray-400">
+                      ({new Date(activity.timestamp).toLocaleString()})
+                    </span>
+                  </div>
+                ))
+              )}
             </section>
           </div>
         </main>
