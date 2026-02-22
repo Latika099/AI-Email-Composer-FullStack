@@ -34,6 +34,28 @@ const EmailHistory = () => {
     }, [search, tone, sort]);
 
     if (loading) return <p>Loading email history...</p>;
+    const handleDelete = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this email?");
+        if (!confirmDelete) return;
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/email/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token"),
+                },
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                // Remove deleted email from UI immediately
+                setEmails((prev) => prev.filter((email) => email._id !== id));
+            }
+        } catch (error) {
+            console.error("Error deleting email:", error);
+        }
+    };
 
     return (
         <div style={{ padding: "20px" }}>
@@ -100,6 +122,20 @@ const EmailHistory = () => {
                         <small>
                             {new Date(email.createdAt).toLocaleString()}
                         </small>
+                        <button
+                            onClick={() => handleDelete(email._id)}
+                            style={{
+                                marginTop: "10px",
+                                padding: "6px 10px",
+                                backgroundColor: "#dc2626",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            Delete
+                        </button>
                     </div>
                 ))
             )}

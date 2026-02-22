@@ -243,19 +243,21 @@ export const updateEmail = async (req, res) => {
 // DELETE /api/email/:id - Delete email
 export const deleteEmail = async (req, res) => {
   try {
-    const email = await Email.findByIdAndDelete(req.params.id);
+    const email = await Email.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id,
+    });
 
     if (!email) {
       return res.status(404).json({
         success: false,
-        message: "Email not found",
+        message: "Email not found or not authorized",
       });
     }
 
     res.status(200).json({
       success: true,
       message: "Email deleted successfully",
-      data: email,
     });
   } catch (error) {
     res.status(500).json({
