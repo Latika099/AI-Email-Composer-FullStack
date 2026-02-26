@@ -10,8 +10,9 @@ const activityLogSchema = new mongoose.Schema(
     emailId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Email",
-      required: true,
+      required: false, // Changed to optional for direct send actions
     },
+
     action: {
       type: String,
       required: true,

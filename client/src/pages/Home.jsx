@@ -1,18 +1,20 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import EditorialFeatureBlock from "../components/EditorialFeatureBlock";
-import ImageBanner from "../components/ImageBanner";
+import HowItWorks from "../components/HowItWorks";
+import FeaturesGrid from "../components/FeaturesGrid";
 import MinimalCTA from "../components/MinimalCTA";
 import Footer from "../components/Footer";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-[#EEF3F5]">
+    <div className="min-h-screen bg-white selection:bg-indigo-100 italic-selection:text-indigo-900">
       <Navbar />
-      <Hero />
-      <EditorialFeatureBlock />
-      <ImageBanner />
-      <MinimalCTA />
+      <main>
+        <Hero />
+        <FeaturesGrid />
+        <HowItWorks />
+        <MinimalCTA />
+      </main>
       <Footer />
     </div>
   );

@@ -5,6 +5,7 @@ const FeatureImageSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Image Left */}
           <div className="order-2 lg:order-1">
+            {/* main(1) */}
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
               alt="AI workspace with laptop and desk"
@@ -18,11 +19,11 @@ const FeatureImageSection = () => {
               Work Smarter, Not Harder
             </h2>
             <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-              Our AI-powered email composer understands context, tone, and intent. 
+              Our AI-powered email composer understands context, tone, and intent.
               Create professional emails that get results in minutes, not hours.
             </p>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              Whether you're crafting a business proposal, following up with clients, 
+              Whether you're crafting a business proposal, following up with clients,
               or sending personalized messages, our intelligent system adapts to your needs.
             </p>
             <ul className="space-y-4">

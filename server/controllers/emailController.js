@@ -1,6 +1,8 @@
-import Email from "../models/email.js";
+import Email from "../models/Email.js";
 import { generateEmail as generateEmailWithGroq } from "../services/groqService.js";
 import ActivityLog from "../models/ActivityLog.js";
+import { sendMail } from "../services/mailService.js";
+
 // POST /api/email/generate - Generate email with AI
 export const generateEmail = async (req, res) => {
   console.log("Request received at /api/email/generate");
@@ -77,7 +79,9 @@ Instructions:
     return res.status(200).json({
       success: true,
       email: generatedText,
+      emailId: newEmail._id,
     });
+
   } catch (error) {
     console.error("Email Controller Error:", error);
     if (error.message === "GROQ_API_KEY is not configured") {
@@ -112,6 +116,48 @@ Instructions:
     });
   }
 };
+
+// POST /api/email/send - Send an email
+export const sendEmailAction = async (req, res) => {
+  try {
+    const { to, from, subject, body, emailId } = req.body;
+
+    if (!to || !subject || !body) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: to, subject, or body",
+      });
+    }
+
+    await sendMail({
+      from, // Optional, defaults to SMTP_USER
+      to,
+      subject,
+      text: body,
+    });
+
+    // Log the activity
+    await ActivityLog.create({
+      userId: req.user.id,
+      emailId: emailId || null,
+      action: "sent",
+    });
+
+
+    res.status(200).json({
+      success: true,
+      message: "Email sent successfully!",
+    });
+  } catch (error) {
+    console.error("Email Send Controller Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to send email",
+      error: error.message,
+    });
+  }
+};
+
 
 // GET /api/email - Get all emails
 export const getAllEmails = async (req, res) => {

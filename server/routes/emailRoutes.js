@@ -6,7 +6,9 @@ import {
   updateEmail,
   deleteEmail,
   generateEmail,
+  sendEmailAction,
 } from "../controllers/emailController.js";
+
 import authMiddleware from "../middleware/authMiddleware.js";
 import { getEmailStats } from "../controllers/emailController.js";
 import { getRecentActivity } from "../controllers/emailController.js";
@@ -21,6 +23,10 @@ router.get("/", getAllEmails);
 
 // POST /api/email/generate - Generate email with AI (protected)
 router.post("/generate", generateEmail);
+
+// POST /api/email/send - Send email (protected)
+router.post("/send", sendEmailAction);
+
 
 // POST /api/email - Create new email
 router.post("/", createEmail);

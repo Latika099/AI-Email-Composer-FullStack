@@ -20,11 +20,11 @@ const EditorialFeatureBlock = () => {
                 Work Smarter, Not Harder
               </h2>
               <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                Our AI-powered email composer understands context, tone, and intent. 
+                Our AI-powered email composer understands context, tone, and intent.
                 Create professional emails that get results in minutes, not hours.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Whether you're crafting a business proposal, following up with clients, 
+                Whether you're crafting a business proposal, following up with clients,
                 or sending personalized messages, our intelligent system adapts to your needs.
               </p>
             </div>
@@ -42,11 +42,11 @@ const EditorialFeatureBlock = () => {
                 Professional Communication Made Simple
               </h2>
               <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                Save time while maintaining the highest standards of professional communication. 
+                Save time while maintaining the highest standards of professional communication.
                 Our AI learns your style and preferences to deliver consistent, high-quality results.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
-                From formal business correspondence to friendly client updates, 
+                From formal business correspondence to friendly client updates,
                 generate the perfect tone for every situation with just a few clicks.
               </p>
             </div>

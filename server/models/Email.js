@@ -23,11 +23,26 @@ const emailSchema = new mongoose.Schema(
     keywords: {
       type: String,
     },
+    subject: {
+      type: String,
+      default: "No Subject",
+    },
+    recipient: {
+      type: String,
+    },
+    senderEmail: {
+      type: String,
+    },
     generatedContent: {
       type: String,
-      required: true
-    }
-    ,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["draft", "final", "sent"],
+      default: "final",
+    },
+
   },
   {
     timestamps: true,

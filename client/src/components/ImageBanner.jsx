@@ -11,7 +11,7 @@ const ImageBanner = () => {
       >
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/40"></div>
-        
+
         {/* Content */}
         <div className="relative z-10 h-full flex items-center justify-center">
           <div className="text-center max-w-4xl mx-auto px-8">

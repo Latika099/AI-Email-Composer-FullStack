@@ -1,162 +1,64 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Sparkles,
+  Send,
+  Copy,
+  Check,
+  AlertCircle,
+  RefreshCw,
+  Mail,
+  User,
+  Info,
+  Type,
+  Globe
+} from "lucide-react";
+import DashboardLayout from "../components/DashboardLayout";
 
 const CreateEmail = () => {
   const navigate = useNavigate();
-  const [emailPurpose, setEmailPurpose] = useState("");
-  const [tone, setTone] = useState("");
-  const [emailType, setEmailType] = useState("");
-  const [emailLength, setEmailLength] = useState("");
+
+  // Form State
+  const [purpose, setPurpose] = useState("");
+  const [tone, setTone] = useState("friendly");
+  const [type, setType] = useState("direct");
+  const [length, setLength] = useState("medium");
   const [keywords, setKeywords] = useState("");
-  const [generatedEmail, setGeneratedEmail] = useState("");
+
+  // Generation State
   const [isLoading, setIsLoading] = useState(false);
+  const [generatedEmail, setGeneratedEmail] = useState("");
+  const [currentEmailId, setCurrentEmailId] = useState(null);
+  const [error, setError] = useState("");
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    navigate("/login");
-  };
+  // Editing State
+  const [editableSubject, setEditableSubject] = useState("");
+  const [editableBody, setEditableBody] = useState("");
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  const getSuggestedKeywords = (tone) => {
-    const suggestions = {
-      professional: "meeting, schedule, update, project",
-      friendly: "thanks, appreciate, happy, connect",
-      apology: "sorry, apologize, inconvenience, regret",
-      "follow-up": "reminder, checking, update, status",
-      casual: "quick note, hey, just checking"
-    };
-    return suggestions[tone] || "";
-  };
+  // Sending State
+  const [receiverEmail, setReceiverEmail] = useState("");
+  const [senderEmail, setSenderEmail] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
+  const [sendError, setSendError] = useState("");
 
-  // Auto-fill keywords when tone changes
-  useEffect(() => {
-    if (tone && !keywords.trim()) {
-      setKeywords(getSuggestedKeywords(tone));
-    }
-  }, [tone]);
-
-  const getSubject = (purpose, emailType) => {
-    if (purpose.toLowerCase().includes("leave")) {
-      return "Request for Leave";
-    }
-    if (emailType === "formal") {
-      return "Regarding: " + purpose;
-    }
-    return purpose;
-  };
-
-  const getGreeting = (emailType) => {
-    return emailType === "formal"
-      ? "Dear Sir/Madam,"
-      : "Hi there,";
-  };
-
-  const buildMockEmail = (purpose, tone, type, length, keywords) => {
-    const selectedTone = tone || "professional";
-    const selectedType = type || "formal";
-    const selectedLength = length || "medium";
-
-    // Special Leave Email Template
-    const isLeaveRequest = purpose.toLowerCase().includes("leave");
-    if (isLeaveRequest && selectedType === "formal") {
-      return `Subject: Request for Leave
-
-Dear Sir/Madam,
-
-I hope this message finds you well. I would like to formally request leave as ${purpose}. I will ensure that all my responsibilities are managed appropriately during my absence.
-
-Kindly grant approval for the same. Please let me know if any further information is required.
-
-Sincerely,
-AI Email Composer`;
+  const handleGenerate = async (e) => {
+    e.preventDefault();
+    if (!purpose.trim()) {
+      setError("Please describe the purpose of the email");
+      return;
     }
 
-    const greeting = getGreeting(selectedType);
-
-    // Determine closing based on type and tone
-    let closing = "";
-    if (selectedType === "formal") {
-      closing = selectedTone === "apology"
-        ? "Sincerely,"
-        : "Best regards,";
-    } else {
-      closing = selectedTone === "apology"
-        ? "With sincere apologies,"
-        : selectedTone === "friendly"
-          ? "Best regards,"
-          : "Thanks,";
-    }
-
-    // Weave keywords naturally only when they exist (no bullet dumping)
-    const keywordSnippet = keywords && keywords.trim()
-      ? ` This relates to ${keywords.trim()}.`
-      : "";
-
-    let paragraphs = [];
-
-    if (selectedTone === "professional") {
-      paragraphs.push(`I hope this message finds you well. ${purpose}${keywordSnippet}`);
-      paragraphs.push(`I wanted to reach out regarding this matter and would appreciate your attention to the details provided above.`);
-      if (selectedLength !== "short") {
-        paragraphs.push(`I believe this approach will help us move forward effectively. Please feel free to reach out if you have any questions or require further clarification.`);
-      }
-    }
-    else if (selectedTone === "friendly") {
-      paragraphs.push(`Hope you're doing great! ${purpose}${keywordSnippet}`);
-      paragraphs.push(`I thought this would be a good opportunity to connect and share this information with you.`);
-      if (selectedLength !== "short") {
-        paragraphs.push(`Looking forward to hearing from you soon and continuing our conversation!`);
-      }
-    }
-    else if (selectedTone === "apology") {
-      paragraphs.push(`I wanted to reach out and sincerely apologize for the inconvenience. ${purpose}${keywordSnippet}`);
-      paragraphs.push(`I understand the inconvenience this may have caused, and I take full responsibility for this matter.`);
-      if (selectedLength !== "short") {
-        paragraphs.push(`I am committed to resolving this issue promptly and ensuring it doesn't happen again. I hope we can move forward positively and I appreciate your understanding.`);
-      }
-    }
-    else if (selectedTone === "follow-up") {
-      paragraphs.push(`I'm following up on our previous conversation regarding ${purpose}${keywordSnippet}`);
-      paragraphs.push(`I wanted to check in and see if you had any questions or needed any additional information.`);
-      if (selectedLength !== "short") {
-        paragraphs.push(`Please let me know if there's anything else I can assist with or if you need any clarification on the points we discussed.`);
-      }
-    }
-    else if (selectedTone === "casual") {
-      paragraphs.push(`Hey! ${purpose}${keywordSnippet}`);
-      paragraphs.push(`Just wanted to drop you a quick note about this.`);
-      if (selectedLength !== "short") {
-        paragraphs.push(`Let me know what you think when you get a chance!`);
-      }
-    }
-    else {
-      paragraphs.push(`${purpose}${keywordSnippet}`);
-      paragraphs.push(`Thank you for your time and consideration.`);
-    }
-
-    // Adjust length
-    let bodyContent = "";
-    if (selectedLength === "short") {
-      bodyContent = paragraphs[0];
-    } else if (selectedLength === "medium") {
-      bodyContent = paragraphs.slice(0, 2).join('\n\n');
-    } else {
-      bodyContent = paragraphs.join('\n\n');
-      if (selectedTone === "professional" && paragraphs.length < 3) {
-        bodyContent += '\n\nI wanted to provide you with comprehensive details to ensure clarity. If you need any additional information or have questions, please dont hesitate to reach out.';
-      }
-    }
-
-    const subject = getSubject(purpose, selectedType);
-
-    return `Subject: ${subject}\n\n${greeting}\n\n${bodyContent}\n\n${closing}\nAI Email Composer`;
-  };
-
-  const generateEmailRequest = async () => {
     setIsLoading(true);
+    setError("");
+    setGeneratedEmail("");
+    setSendSuccess(false);
+    setSendError("");
 
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch("http://localhost:5000/api/email/generate", {
         method: "POST",
         headers: {
@@ -164,228 +66,322 @@ AI Email Composer`;
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          purpose: emailPurpose,
-          tone: tone || "professional",
-          type: emailType || "formal",
-          length: emailLength || "medium",
+          purpose,
+          tone,
+          type,
+          length,
           keywords
         })
       });
 
       const data = await response.json();
-      console.log("API response:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to generate email");
       }
 
       setGeneratedEmail(data.email);
+      setCurrentEmailId(data.emailId);
 
-    } catch (error) {
-      console.error("Error generating email:", error);
-      alert(error.message || "Something went wrong.");
+      // Parse subject and body
+      const subjectMatch = data.email.match(/Subject:\s*(.*)/i);
+      if (subjectMatch && subjectMatch[1]) {
+        setEditableSubject(subjectMatch[1].trim());
+        setEditableBody(data.email.replace(/Subject:\s*.*\n/i, "").trim());
+      } else {
+        setEditableSubject("Generated Email");
+        setEditableBody(data.email);
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGenerate = (e) => {
-    e.preventDefault();
-    if (!emailPurpose.trim()) {
-      alert("Please enter email purpose");
-      return;
-    }
-    generateEmailRequest();
-  };
-
-  const handleRegenerate = () => {
-    if (!emailPurpose.trim()) {
-      alert("Please enter email purpose");
-      return;
-    }
-    generateEmailRequest();
-  };
-
   const handleCopy = () => {
-    if (generatedEmail) {
-      navigator.clipboard.writeText(generatedEmail);
+    const fullText = `Subject: ${editableSubject}\n\n${editableBody}`;
+    navigator.clipboard.writeText(fullText);
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 2000);
+  };
+
+  const handleSendEmail = async () => {
+    if (!receiverEmail.trim()) {
+      setSendError("Recipient email is required");
+      return;
+    }
+
+    setIsSending(true);
+    setSendSuccess(false);
+    setSendError("");
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:5000/api/email/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          to: receiverEmail,
+          from: senderEmail,
+          subject: editableSubject,
+          body: editableBody,
+          emailId: currentEmailId
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSendSuccess(true);
+      } else {
+        setSendError(data.message || "Failed to send email");
+      }
+    } catch (error) {
+      setSendError("Network error. Please try again.");
+    } finally {
+      setIsSending(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#EEF3F5] text-gray-800">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col py-6 px-4 sticky top-0 h-screen shadow-md">
-          <div className="mb-8 px-2">
-            <h1 className="text-2xl font-bold text-[#1F2A37]">
-              AI Email Composer
-            </h1>
-          </div>
-          <nav className="space-y-2 flex-1">
-            <button
-              onClick={() => navigate("/dashboard")}
-              className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors"
-            >
-              Dashboard
-            </button>
-            <button className="w-full text-left px-3 py-2 rounded-lg bg-[#EEF3F5] text-[#1F2A37] font-semibold">
-              Create Email
-            </button>
-            <button
-              onClick={() => navigate("/email-history")}
-              className="w-full text-left px-3 py-2 rounded-lg text-gray-700 hover:bg-[#EEF3F5] transition-colors"
-            >
-              Email History
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-full text-left px-3 py-2 rounded-lg text-red-500 hover:text-red-600 transition-colors"
-            >
-              Logout
-            </button>
-          </nav>
-          <p className="px-2 text-xs text-gray-500 mt-4">
-            Dashboard UI placeholder – backend integration coming later.
-          </p>
-        </aside>
+    <DashboardLayout>
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        {/* Input Section */}
+        <div className="w-full lg:w-80 xl:w-96 flex flex-col gap-6 shrink-0">
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-600" />
+              AI Settings
+            </h3>
 
-        {/* Main content */}
-        <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* LEFT — Email Input Card */}
-              <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
-                <h2 className="text-2xl font-bold text-[#1F2A37]">
-                  Generate Email
-                </h2>
+            <form onSubmit={handleGenerate} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-gray-400" />
+                  Email Purpose
+                </label>
+                <textarea
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  placeholder="What is this email about?"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all min-h-[120px] text-sm"
+                />
+              </div>
 
-                <form onSubmit={handleGenerate} className="space-y-4">
-                  {/* Email Purpose */}
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <RefreshCw className="w-4 h-4 text-gray-400" />
+                    Tone
+                  </label>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-sm"
+                  >
+                    <option value="friendly">Friendly</option>
+                    <option value="formal">Formal</option>
+                    <option value="professional">Professional</option>
+                    <option value="assertive">Assertive</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Purpose
-                    </label>
-                    <textarea
-                      value={emailPurpose}
-                      onChange={(e) => setEmailPurpose(e.target.value)}
-                      placeholder="Describe what you want to communicate..."
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1F2A37] transition resize-none"
-                      rows="4"
-                    />
-                  </div>
-
-                  {/* Tone */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tone
-                    </label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Length</label>
                     <select
-                      value={tone}
-                      onChange={(e) => setTone(e.target.value)}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1F2A37] transition"
+                      value={length}
+                      onChange={(e) => setLength(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 text-sm"
                     >
-                      <option value="">Select tone</option>
-                      <option value="professional">Professional</option>
-                      <option value="friendly">Friendly</option>
-                      <option value="apology">Apology</option>
-                      <option value="follow-up">Follow-up</option>
-                      <option value="casual">Casual</option>
-                    </select>
-                  </div>
-
-                  {/* Email Type */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Type
-                    </label>
-                    <select
-                      value={emailType}
-                      onChange={(e) => setEmailType(e.target.value)}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1F2A37] transition"
-                    >
-                      <option value="">Select type</option>
-                      <option value="formal">Formal</option>
-                      <option value="casual">Casual</option>
-                    </select>
-                  </div>
-
-                  {/* Email Length */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Length
-                    </label>
-                    <select
-                      value={emailLength}
-                      onChange={(e) => setEmailLength(e.target.value)}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1F2A37] transition"
-                    >
-                      <option value="">Select length</option>
                       <option value="short">Short</option>
                       <option value="medium">Medium</option>
                       <option value="long">Long</option>
                     </select>
                   </div>
-
-                  {/* Keywords */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Keywords
-                    </label>
-                    <textarea
-                      value={keywords}
-                      onChange={(e) => setKeywords(e.target.value)}
-                      placeholder="Add keywords or phrases to include..."
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#1F2A37] transition resize-none"
-                      rows="3"
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Type</label>
+                    <select
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-100 bg-gray-50 text-sm"
+                    >
+                      <option value="direct">Direct</option>
+                      <option value="detailed">Detailed</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="text-red-500 text-xs font-medium bg-red-50 p-3 rounded-lg flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-[#1F2A37] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#111827] transition-all duration-300 disabled:opacity-50 shadow-md"
+              >
+                {isLoading ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5" />
+                    Generate
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Output Section */}
+        <div className="flex-1 min-w-0">
+          <AnimatePresence mode="wait">
+            {!generatedEmail && !isLoading ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="h-[400px] border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center p-8 text-center bg-gray-50/50"
+              >
+                <div className="bg-white p-4 rounded-2xl shadow-sm mb-4">
+                  <Mail className="w-8 h-8 text-gray-300" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Start Writing</h3>
+                <p className="text-sm text-gray-400 max-w-xs">
+                  Fill in the settings on the left to generate your AI-powered email.
+                </p>
+              </motion.div>
+            ) : isLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="h-[400px] bg-white rounded-3xl border border-gray-100 flex flex-col items-center justify-center p-8 text-center shadow-sm"
+              >
+                <div className="relative mb-6">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="absolute -inset-4 bg-indigo-100 rounded-full blur-xl"
+                  />
+                  <Sparkles className="w-12 h-12 text-indigo-600 relative z-10" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Composing...</h3>
+                <p className="text-sm text-gray-400">Our AI is drafting the perfect response for you.</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="content"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden flex flex-col"
+              >
+                <div className="p-6 border-b border-gray-50 bg-gray-50/50 flex items-center justify-between">
+                  <h3 className="font-bold text-gray-900">Email Draft</h3>
+                  <button
+                    onClick={handleCopy}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:border-indigo-100 transition-all"
+                  >
+                    {copySuccess ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                    {copySuccess ? "Copied" : "Copy"}
+                  </button>
+                </div>
+
+                <div className="p-8 space-y-6">
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">Subject</label>
+                    <input
+                      value={editableSubject}
+                      onChange={(e) => setEditableSubject(e.target.value)}
+                      className="w-full text-xl font-bold text-gray-900 border-none focus:ring-0 p-0 placeholder-gray-300"
+                      placeholder="Email Subject"
                     />
                   </div>
 
-                  {/* Generate Button */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-[#1F2A37] text-white py-3 rounded-xl font-semibold hover:bg-[#111827] transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? "Generating..." : "Generate Email"}
-                  </button>
-                </form>
-              </div>
+                  <div className="h-px bg-gray-100" />
 
-              {/* RIGHT — Email Preview Card */}
-              <div className="bg-white rounded-2xl shadow-md p-6 flex flex-col h-full">
-                <h2 className="text-2xl font-bold text-[#1F2A37] mb-4">
-                  Generated Email
-                </h2>
-
-                {/* Preview Box */}
-                <div className="border border-gray-200 rounded-xl p-4 min-h-[300px] bg-gray-50 text-gray-700 whitespace-pre-wrap flex-1 mb-4">
-                  {generatedEmail || "Your AI-generated email will appear here..."}
+                  <div>
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 block">Body</label>
+                    <textarea
+                      value={editableBody}
+                      onChange={(e) => setEditableBody(e.target.value)}
+                      className="w-full min-h-[250px] text-gray-700 leading-relaxed border-none focus:ring-0 p-0 resize-none placeholder-gray-300"
+                      placeholder="Start writing..."
+                    />
+                  </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3">
+                {/* Send Controls */}
+                <div className="p-8 border-t border-gray-100 bg-gray-50/30">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="relative">
+                      <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="email"
+                        placeholder="Recipient Email"
+                        value={receiverEmail}
+                        onChange={(e) => setReceiverEmail(e.target.value)}
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                      />
+                    </div>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="email"
+                        placeholder="Sender Name (Optional)"
+                        value={senderEmail}
+                        onChange={(e) => setSenderEmail(e.target.value)}
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-100 focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  {sendSuccess && (
+                    <div className="flex items-center gap-2 text-green-600 bg-green-50 p-4 rounded-2xl mb-6">
+                      <Check className="w-5 h-5" />
+                      <span className="text-sm font-bold">Email sent successfully!</span>
+                    </div>
+                  )}
+
+                  {sendError && (
+                    <div className="flex items-center gap-2 text-red-600 bg-red-50 p-4 rounded-2xl mb-6">
+                      <AlertCircle className="w-5 h-5" />
+                      <span className="text-sm font-bold">{sendError}</span>
+                    </div>
+                  )}
+
                   <button
-                    onClick={handleRegenerate}
-                    disabled={!generatedEmail}
-                    className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-xl font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleSendEmail}
+                    disabled={isSending}
+                    className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-indigo-100"
                   >
-                    Regenerate
-                  </button>
-                  <button
-                    onClick={handleCopy}
-                    disabled={!generatedEmail}
-                    className="flex-1 bg-[#1F2A37] text-white py-2 px-4 rounded-xl font-medium hover:bg-[#111827] transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Copy
+                    {isSending ? (
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Send Now
+                      </>
+                    )}
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        </main>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
