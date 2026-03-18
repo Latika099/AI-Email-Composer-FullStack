@@ -3,63 +3,86 @@ import { Sparkles, Twitter, Github, Linkedin, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 border-t border-gray-100">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+    <footer className="bg-white pt-40 pb-20 px-10 sm:px-12 lg:px-16 border-t border-gray-100/50">
+      <div className="max-w-[1600px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-20 mb-32">
           {/* Brand & Mission */}
-          <div className="col-span-1 md:col-span-2 space-y-6">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="bg-[#1F2A37] p-2 rounded-xl">
-                <Sparkles className="w-5 h-5 text-white" />
+          <div className="col-span-1 md:col-span-2 lg:col-span-2 space-y-10">
+            <Link to="/" className="flex items-center gap-4 group">
+              <div className="bg-[#2e2a27] p-3 rounded-2xl group-hover:scale-110 transition-all duration-700 shadow-lg">
+                <Sparkles className="w-5 h-5 text-fuchsia-400 group-hover:rotate-45 transition-transform duration-700" />
               </div>
-              <span className="text-xl font-bold text-[#1F2A37] tracking-tight">
-                MailFlow AI
+              <span className="text-xl font-black text-[#2e2a27] tracking-[0.1em] font-serif">
+                MAILFLOW
               </span>
             </Link>
-            <p className="text-gray-500 max-w-xs leading-relaxed">
-              We're building the future of professional communication. Our AI-powered tools
-              help you focus on the relationships that matter, one email at a time.
+            <p className="text-gray-400 max-w-sm leading-relaxed font-medium text-lg">
+              Redefining the architecture of professional communication. Our ecosystem 
+              orchestrates relationships through precision-engineered intelligence.
             </p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="p-2 bg-gray-50 text-gray-400 hover:text-[#1F2A37] hover:bg-gray-100 rounded-lg transition-all"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="p-2 bg-gray-50 text-gray-400 hover:text-[#1F2A37] hover:bg-gray-100 rounded-lg transition-all"><Linkedin className="w-5 h-5" /></a>
-              <a href="#" className="p-2 bg-gray-50 text-gray-400 hover:text-[#1F2A37] hover:bg-gray-100 rounded-lg transition-all"><Github className="w-5 h-5" /></a>
+            <div className="flex items-center gap-6">
+              {[Twitter, Linkedin, Github].map((Icon, i) => (
+                <a key={i} href="#" className="w-12 h-12 flex items-center justify-center bg-gray-50 text-gray-400 hover:text-violet-500 hover:bg-violet-50 rounded-xl transition-all duration-500 group">
+                    <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Product Links */}
           <div>
-            <h4 className="text-[#1F2A37] font-bold mb-6">Product</h4>
-            <ul className="space-y-4">
-              <li><Link to="/" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">Features</Link></li>
-              <li><Link to="/" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">How it Works</Link></li>
-              <li><Link to="/" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">Pricing</Link></li>
-              <li><Link to="/" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">Integrations</Link></li>
+            <h4 className="text-[#2e2a27] font-black text-[10px] uppercase tracking-[0.3em] mb-10">Product</h4>
+            <ul className="space-y-6">
+              {["Features", "Methodology", "Pricing", "Integrations"].map((item) => (
+                <li key={item}>
+                    <Link to="/" className="text-gray-400 hover:text-violet-600 transition-colors text-[11px] font-black uppercase tracking-[0.2em]">
+                        {item}
+                    </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Support Links */}
           <div>
-            <h4 className="text-[#1F2A37] font-bold mb-6">Support</h4>
-            <ul className="space-y-4">
-              <li><Link to="/login" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">Sign in</Link></li>
-              <li><Link to="/register" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium">Register</Link></li>
-              <li><a href="mailto:support@mailflowai.com" className="text-gray-500 hover:text-indigo-600 transition-colors text-sm font-medium flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Contact Us
-              </a></li>
+            <h4 className="text-[#2e2a27] font-black text-[10px] uppercase tracking-[0.3em] mb-10">Support</h4>
+            <ul className="space-y-6">
+              {["Log in", "Register", "Privacy", "Terms"].map((item) => (
+                  <li key={item}>
+                    <Link to={item.toLowerCase().includes("log") ? "/login" : item.toLowerCase().includes("reg") ? "/register" : "/"} className="text-gray-400 hover:text-violet-600 transition-colors text-[11px] font-black uppercase tracking-[0.2em]">
+                        {item}
+                    </Link>
+                  </li>
+              ))}
             </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="text-[#2e2a27] font-black text-[10px] uppercase tracking-[0.3em] mb-10">Connect</h4>
+            <a href="mailto:presence@mailflow.ai" className="group block space-y-2">
+                <span className="text-gray-400 text-sm font-medium">Inquiries</span>
+                <span className="text-[#2e2a27] font-black text-[11px] uppercase tracking-[0.2em] block group-hover:text-violet-500 transition-colors underline underline-offset-8 decoration-gray-100 group-hover:decoration-violet-100">
+                    presence@mailflow.ai
+                </span>
+            </a>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-gray-400 text-sm font-medium">
-            © {new Date().getFullYear()} MailFlow AI. All rights reserved. Built with ❤️ for your inbox.
-          </p>
-          <div className="flex items-center gap-8">
-            <a href="#" className="text-xs text-gray-400 hover:text-gray-600 font-medium">Privacy Policy</a>
-            <a href="#" className="text-xs text-gray-400 hover:text-gray-600 font-medium">Terms of Service</a>
+        <div className="pt-12 border-t border-gray-100/50 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="flex items-center gap-4">
+              <div className="w-8 h-[1px] bg-gray-100"></div>
+              <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                © {new Date().getFullYear()} MailFlow Premium Group. All rights reserved.
+              </p>
+          </div>
+          <div className="flex items-center gap-10">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-300">Edition 2.0.4</span>
+            <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#2e2a27]">Systems Operational</span>
+            </div>
           </div>
         </div>
       </div>

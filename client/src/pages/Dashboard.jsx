@@ -85,51 +85,57 @@ const Dashboard = () => {
       label: "Total Generated",
       value: stats.totalEmails,
       icon: <Mail className="w-6 h-6" />,
-      color: "text-blue-600",
-      bg: "bg-blue-50"
+      color: "text-amber-600",
+      bg: "bg-amber-50"
     },
     {
       label: "Active This Week",
       value: stats.emailsThisWeek,
       icon: <TrendingUp className="w-6 h-6" />,
-      color: "text-green-600",
-      bg: "bg-green-50"
+      color: "text-emerald-600",
+      bg: "bg-emerald-50"
     },
     {
       label: "Saved Drafts",
       value: stats.savedDrafts,
       icon: <FileText className="w-6 h-6" />,
-      color: "text-indigo-600",
-      bg: "bg-indigo-50"
+      color: "text-violet-600",
+      bg: "bg-violet-50"
     }
   ];
 
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto space-y-10">
-        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+      <div className="max-w-7xl mx-auto space-y-12">
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-10 mb-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
+            className="space-y-4"
           >
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">
-              Welcome back
+            <div className="flex items-center gap-3">
+              <span className="w-12 h-[2px] bg-violet-500 rounded-full"></span>
+              <p className="text-[11px] font-black text-violet-500 uppercase tracking-[0.3em]">Performance Overview</p>
+            </div>
+            <h2 className="text-6xl font-black text-[#2e2a27] tracking-tight font-serif leading-tight">
+              Good day, <br/><span className="text-violet-600/90">{stats.userName || 'Writer'}</span>
             </h2>
-            <p className="text-gray-500 mt-2 text-lg">
-              Here's how your AI-powered communication is performing.
+            <p className="text-gray-400 text-xl font-medium max-w-xl leading-relaxed">
+              Your AI-assisted communication performance is looking strong today.
             </p>
           </motion.div>
 
           <motion.button
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.05, translateY: -4 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/create-email")}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-[#1F2A37] text-white font-bold shadow-xl shadow-gray-200 hover:bg-[#111827] transition-all group"
+            className="inline-flex items-center justify-center gap-4 px-10 py-5 rounded-[2rem] bg-[#2e2a27] text-[#f6f3ee] font-black text-sm uppercase tracking-widest shadow-[0_20px_50px_rgba(46,42,39,0.2)] hover:bg-black transition-all group relative overflow-hidden"
           >
-            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-            Create New Email
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-700 relative z-10" />
+            <span className="relative z-10">New Composition</span>
           </motion.button>
         </header>
 
@@ -138,30 +144,30 @@ const Dashboard = () => {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid gap-6 sm:grid-cols-3"
+          className="grid gap-10 sm:grid-cols-3"
         >
           {statCards.map((card, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
-              className="bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group relative overflow-hidden"
+              className="bg-white border border-gray-100/50 rounded-[3.5rem] p-12 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] hover:-translate-y-3 transition-all duration-700 group relative overflow-hidden ring-1 ring-black/[0.03] ring-offset-[8px] ring-offset-white"
             >
-              <div className="relative z-10 flex flex-col gap-6">
-                <div className={`w-12 h-12 rounded-xl ${card.bg} ${card.color} flex items-center justify-center`}>
+              <div className="relative z-10 flex flex-col gap-10">
+                <div className={`w-16 h-16 rounded-[1.5rem] ${card.bg} ${card.color} flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-700`}>
                   {card.icon}
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">{card.label}</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-gray-900">{card.value}</span>
-                    <span className="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg flex items-center gap-1">
-                      <ArrowUpRight className="w-3 h-3" />
+                <div className="space-y-4">
+                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.25em]">{card.label}</p>
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-6xl font-black text-[#2e2a27] tracking-tighter">{card.value}</span>
+                    <span className="text-[11px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-emerald-100/50">
+                      <ArrowUpRight className="w-3.5 h-3.5" />
                       12%
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 scale-150 rotate-12 transition-all">
+              <div className="absolute -top-10 -right-10 p-12 opacity-[0.02] group-hover:opacity-[0.06] scale-[3.5] rotate-[25deg] transition-all duration-1000 group-hover:rotate-[45deg]">
                 {card.icon}
               </div>
             </motion.div>

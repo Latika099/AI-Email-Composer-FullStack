@@ -7,9 +7,9 @@ import Footer from "../components/Footer";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white selection:bg-indigo-100 italic-selection:text-indigo-900">
+    <div className="min-h-screen bg-[#f6f3ee] selection:bg-violet-100 selection:text-violet-900">
       <Navbar />
-      <main>
+      <main className="transition-all duration-700">
         <Hero />
         <FeaturesGrid />
         <HowItWorks />
