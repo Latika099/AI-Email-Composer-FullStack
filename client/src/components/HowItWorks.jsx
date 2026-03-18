@@ -4,36 +4,41 @@ import { Settings, PenTool, Send, CheckCircle2 } from "lucide-react";
 const HowItWorks = () => {
     const steps = [
         {
-            title: "Set Your Context",
-            description: "Tell us who you're writing to and the core purpose of your message. Add keywords to guide the AI.",
-            icon: <Settings className="w-7 h-7" />,
-            color: "bg-blue-50 text-blue-600",
+            title: "Define Objectives",
+            description: "Articulate your purpose and core message. Our system ingests your keywords to establish a baseline for the AI.",
+            icon: <Settings className="w-8 h-8" />,
+            color: "bg-violet-50/50 text-violet-500",
         },
         {
-            title: "Choose the Tone",
-            description: "Pick from professional, friendly, or assertive tones. Our AI adapts its language to match your intent.",
-            icon: <PenTool className="w-7 h-7" />,
-            color: "bg-indigo-50 text-indigo-600",
+            title: "Curate Resonance",
+            description: "Select from a spectrum of professional tones. The engine adapts its linguistic structure to match your persona.",
+            icon: <PenTool className="w-8 h-8" />,
+            color: "bg-fuchsia-50/50 text-violet-500",
         },
         {
-            title: "Review & Send",
-            description: "Get a polished draft in seconds. Edit if needed, then copy or send directly via your preferred email client.",
-            icon: <Send className="w-7 h-7" />,
-            color: "bg-purple-50 text-purple-600",
+            title: "Deploy Artifacts",
+            description: "Receive a high-fidelity composition instantly. Refine, duplicate, or dispatch directly to any platform.",
+            icon: <Send className="w-8 h-8" />,
+            color: "bg-indigo-50/50 text-violet-500",
         },
     ];
 
     return (
-        <section id="how-it-works" className="py-24 bg-white relative">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center max-w-3xl mx-auto mb-20">
-                    <h2 className="text-base font-bold text-indigo-600 tracking-wider uppercase mb-3">Workflow</h2>
-                    <h3 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
-                        Everything you need for perfect communication
+        <section id="how-it-works" className="py-40 bg-white relative">
+            <div className="max-w-[1600px] mx-auto px-10 sm:px-12 lg:px-16">
+                <div className="text-center max-w-4xl mx-auto mb-32">
+                    <div className="flex items-center justify-center gap-4 mb-8 uppercase">
+                        <span className="w-12 h-[2px] bg-violet-400 rounded-full"></span>
+                        <h2 className="text-[11px] font-black text-violet-500 tracking-[0.4em]">The Methodology</h2>
+                        <span className="w-12 h-[2px] bg-violet-400 rounded-full"></span>
+                    </div>
+                    <h3 className="text-5xl md:text-7xl font-black text-[#2e2a27] mb-10 font-serif leading-tight">
+                        Seamlessly orchestrated <br className="hidden md:block" />
+                        professional communication.
                     </h3>
-                    <p className="text-lg text-gray-500">
-                        Stop staring at a blank screen. Our simple 3-step process turns your ideas into
-                        world-class emails instantly.
+                    <p className="text-xl text-gray-400 leading-relaxed font-medium max-w-2xl mx-auto">
+                        A refined three-step paradigm that transforms abstract concepts into 
+                        prestigious digital correspondence.
                     </p>
                 </div>
 
@@ -41,22 +46,22 @@ const HowItWorks = () => {
                     {steps.map((step, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            transition={{ delay: index * 0.2 }}
-                            className="relative group p-8 rounded-3xl border border-gray-100 hover:border-indigo-100 hover:shadow-2xl hover:shadow-indigo-50 transition-all duration-500"
+                            transition={{ delay: index * 0.2, duration: 0.8 }}
+                            className="relative group p-12 rounded-[3.5rem] border border-gray-100 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] transition-all duration-700 ring-1 ring-black/[0.02] bg-white cursor-default"
                         >
-                            <div className={`w-14 h-14 rounded-2xl ${step.color} flex items-center justify-center mb-8 transform group-hover:scale-110 transition-transform duration-300`}>
+                            <div className={`w-16 h-16 rounded-[1.75rem] ${step.color} flex items-center justify-center mb-10 transform group-hover:rotate-[360deg] transition-all duration-1000 shadow-inner`}>
                                 {step.icon}
                             </div>
-                            <h4 className="text-2xl font-bold text-gray-900 mb-4">{step.title}</h4>
-                            <p className="text-gray-500 leading-relaxed mb-6">
+                            <h4 className="text-3xl font-black text-[#2e2a27] mb-6 font-serif">{step.title}</h4>
+                            <p className="text-gray-400 leading-relaxed font-medium mb-10">
                                 {step.description}
                             </p>
-                            <div className="flex items-center gap-2 text-indigo-600 font-bold text-sm">
+                            <div className="flex items-center gap-3 text-violet-500 font-black text-[10px] uppercase tracking-[0.2em] opacity-40 group-hover:opacity-100 transition-opacity">
                                 <CheckCircle2 className="w-4 h-4" />
-                                Step {index + 1} Complete
+                                Sequence {index + 1}
                             </div>
                         </motion.div>
                     ))}
