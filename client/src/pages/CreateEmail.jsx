@@ -59,7 +59,7 @@ const CreateEmail = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/email/generate", {
+      const response = await fetch("https://ai-email-server.onrender.com/api/email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +118,7 @@ const CreateEmail = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/email/send", {
+      const response = await fetch("https://ai-email-server.onrender.com/api/email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
