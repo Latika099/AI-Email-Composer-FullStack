@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { apiFetch } from "../utils/api";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -32,8 +33,8 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/auth/register",
+      const response = await apiFetch(
+        "/api/auth/register",
         {
           method: "POST",
           headers: {
@@ -47,12 +48,12 @@ const Register = () => {
 
       if (response.ok) {
         // Save JWT token
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data?.token || "");
 
         // Redirect to dashboard
         navigate("/dashboard");
       } else {
-        setError(data.message || "Registration failed");
+        setError(data?.message || "Registration failed");
       }
     } catch (error) {
       setError("Server error. Please try again.");

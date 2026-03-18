@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "../components/DashboardLayout";
+import { apiFetch } from "../utils/api";
 
 const EmailHistory = () => {
     const [search, setSearch] = useState("");
@@ -27,8 +28,8 @@ const EmailHistory = () => {
     useEffect(() => {
         const fetchEmails = async () => {
             try {
-                const res = await fetch(
-                    `http://localhost:5000/api/email?search=${search}&tone=${tone}&sort=${sort}`,
+                const res = await apiFetch(
+                    `/api/email?search=${search}&tone=${tone}&sort=${sort}`,
                     {
                         headers: {
                             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -37,8 +38,8 @@ const EmailHistory = () => {
                 );
 
                 const data = await res.json();
-                if (data.success) {
-                    setEmails(data.emails);
+                if (data?.success) {
+                    setEmails(data?.emails || []);
                 }
             } catch (error) {
                 console.error("Error fetching emails:", error);
@@ -56,7 +57,7 @@ const EmailHistory = () => {
         if (!confirmDelete) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/email/${id}`, {
+            const res = await apiFetch(`/api/email/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: "Bearer " + localStorage.getItem("token"),
@@ -65,8 +66,8 @@ const EmailHistory = () => {
 
             const data = await res.json();
 
-            if (data.success) {
-                setEmails((prev) => prev.filter((email) => email._id !== id));
+            if (data?.success) {
+                setEmails((prev) => prev?.filter((email) => email?._id !== id) || []);
                 if (selectedEmail?._id === id) setSelectedEmail(null);
             }
         } catch (error) {
@@ -156,7 +157,7 @@ const EmailHistory = () => {
                             <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />
                         ))}
                     </div>
-                ) : emails.length === 0 ? (
+                ) : (emails?.length || 0) === 0 ? (
                     <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                         <MailIcon className="w-12 h-12 text-gray-200 mx-auto mb-4" />
                         <h3 className="text-lg font-bold text-gray-900">No emails found</h3>
@@ -169,7 +170,7 @@ const EmailHistory = () => {
                         animate="show"
                         className="grid gap-8"
                     >
-                        {emails.map((email) => (
+                        {emails?.map((email) => (
                             <motion.div
                                 key={email._id}
                                 variants={itemVariants}

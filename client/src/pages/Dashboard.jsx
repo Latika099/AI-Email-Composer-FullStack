@@ -13,6 +13,7 @@ import {
   Send
 } from "lucide-react";
 import DashboardLayout from "../components/DashboardLayout";
+import { apiFetch } from "../utils/api";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -27,17 +28,17 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/email/stats", {
+        const res = await apiFetch("/api/email/stats", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         });
         const data = await res.json();
-        if (data.success) {
+        if (data?.success) {
           setStats({
-            totalEmails: data.totalEmails,
-            emailsThisWeek: data.emailsThisWeek,
-            savedDrafts: data.savedDrafts,
+            totalEmails: data?.totalEmails || 0,
+            emailsThisWeek: data?.emailsThisWeek || 0,
+            savedDrafts: data?.savedDrafts || 0,
           });
         }
       } catch (error) {
@@ -47,14 +48,14 @@ const Dashboard = () => {
 
     const fetchActivity = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/email/activity", {
+        const res = await apiFetch("/api/email/activity", {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         });
         const data = await res.json();
-        if (data.success) {
-          setActivities(data.activities);
+        if (data?.success) {
+          setActivities(data?.activities || []);
         }
       } catch (error) {
         console.error("Error fetching activity:", error);
@@ -146,7 +147,7 @@ const Dashboard = () => {
           animate="show"
           className="grid gap-10 sm:grid-cols-3"
         >
-          {statCards.map((card, idx) => (
+          {statCards?.map((card, idx) => (
             <motion.div
               key={idx}
               variants={itemVariants}
@@ -195,14 +196,14 @@ const Dashboard = () => {
             </button>
           </div>
 
-          {activities.length === 0 ? (
+          {activities?.length === 0 ? (
             <div className="text-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-200">
               <History className="w-12 h-12 text-gray-200 mx-auto mb-4" />
               <p className="text-gray-400 font-medium">No activity recorded yet.</p>
             </div>
           ) : (
             <div className="space-y-4">
-              {activities.map((activity) => (
+              {activities?.map((activity) => (
                 <motion.div
                   key={activity._id}
                   whileHover={{ x: 10 }}

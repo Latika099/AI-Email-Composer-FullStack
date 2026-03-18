@@ -30,7 +30,7 @@ const Navbar = () => {
             {[
               { name: "Features", href: "#features" },
               { name: "How it Works", href: "#how-it-works" }
-            ].map((item) => (
+            ]?.map((item) => (
               <a
                 key={item.name}
                 href={item.href}

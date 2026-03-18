@@ -74,7 +74,7 @@ const FeaturesGrid = () => {
                 </div>
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {features.map((feature, index) => (
+                    {features?.map((feature, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 30 }}

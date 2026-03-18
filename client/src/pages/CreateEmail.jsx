@@ -16,6 +16,7 @@ import {
   Download
 } from "lucide-react";
 import DashboardLayout from "../components/DashboardLayout";
+import { apiFetch } from "../utils/api";
 
 const CreateEmail = () => {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ const CreateEmail = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/email/generate", {
+      const response = await apiFetch("/api/email/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,20 +81,20 @@ const CreateEmail = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to generate email");
+        throw new Error(data?.message || "Failed to generate email");
       }
 
-      setGeneratedEmail(data.email);
-      setCurrentEmailId(data.emailId);
+      setGeneratedEmail(data?.email || "");
+      setCurrentEmailId(data?.emailId || null);
 
       // Parse subject and body
-      const subjectMatch = data.email.match(/Subject:\s*(.*)/i);
+      const subjectMatch = data?.email?.match(/Subject:\s*(.*)/i);
       if (subjectMatch && subjectMatch[1]) {
         setEditableSubject(subjectMatch[1].trim());
-        setEditableBody(data.email.replace(/Subject:\s*.*\n/i, "").trim());
+        setEditableBody(data?.email?.replace(/Subject:\s*.*\n/i, "").trim() || "");
       } else {
         setEditableSubject("Generated Email");
-        setEditableBody(data.email);
+        setEditableBody(data?.email || "");
       }
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
@@ -134,7 +135,7 @@ const CreateEmail = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/email/send", {
+      const response = await apiFetch("/api/email/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -154,7 +155,7 @@ const CreateEmail = () => {
       if (response.ok) {
         setSendSuccess(true);
       } else {
-        setSendError(data.message || "Failed to send email");
+        setSendError(data?.message || "Failed to send email");
       }
     } catch (error) {
       setSendError("Network error. Please try again.");

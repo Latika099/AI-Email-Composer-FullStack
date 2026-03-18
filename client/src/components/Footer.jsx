@@ -21,7 +21,7 @@ const Footer = () => {
               orchestrates relationships through precision-engineered intelligence.
             </p>
             <div className="flex items-center gap-6">
-              {[Twitter, Linkedin, Github].map((Icon, i) => (
+              {[Twitter, Linkedin, Github]?.map((Icon, i) => (
                 <a key={i} href="#" className="w-12 h-12 flex items-center justify-center bg-gray-50 text-gray-400 hover:text-violet-500 hover:bg-violet-50 rounded-xl transition-all duration-500 group">
                     <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </a>
@@ -33,7 +33,7 @@ const Footer = () => {
           <div>
             <h4 className="text-[#2e2a27] font-black text-[10px] uppercase tracking-[0.3em] mb-10">Product</h4>
             <ul className="space-y-6">
-              {["Features", "Methodology", "Pricing", "Integrations"].map((item) => (
+              {["Features", "Methodology", "Pricing", "Integrations"]?.map((item) => (
                 <li key={item}>
                     <Link to="/" className="text-gray-400 hover:text-violet-600 transition-colors text-[11px] font-black uppercase tracking-[0.2em]">
                         {item}
@@ -47,7 +47,7 @@ const Footer = () => {
           <div>
             <h4 className="text-[#2e2a27] font-black text-[10px] uppercase tracking-[0.3em] mb-10">Support</h4>
             <ul className="space-y-6">
-              {["Log in", "Register", "Privacy", "Terms"].map((item) => (
+              {["Log in", "Register", "Privacy", "Terms"]?.map((item) => (
                   <li key={item}>
                     <Link to={item.toLowerCase().includes("log") ? "/login" : item.toLowerCase().includes("reg") ? "/register" : "/"} className="text-gray-400 hover:text-violet-600 transition-colors text-[11px] font-black uppercase tracking-[0.2em]">
                         {item}

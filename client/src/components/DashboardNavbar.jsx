@@ -71,7 +71,7 @@ const DashboardNavbar = () => {
                 )}
                 
                 <nav className="flex items-center gap-4 text-[11px] font-black uppercase tracking-[0.3em]">
-                    {breadcrumbs.map((crumb, index) => (
+                    {breadcrumbs?.map((crumb, index) => (
                         <div key={crumb.url} className="flex items-center gap-4">
                             {index > 0 && <span className="text-gray-200">/</span>}
                             <Link

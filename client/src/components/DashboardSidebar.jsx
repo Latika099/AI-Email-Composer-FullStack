@@ -46,7 +46,7 @@ const DashboardSidebar = () => {
             </div>
 
             <nav className="space-y-4 flex-1">
-                {menuItems.map((item) => {
+                {menuItems?.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
                         <button

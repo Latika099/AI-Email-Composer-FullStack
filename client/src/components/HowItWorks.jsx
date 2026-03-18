@@ -43,7 +43,7 @@ const HowItWorks = () => {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-12">
-                    {steps.map((step, index) => (
+                    {steps?.map((step, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, scale: 0.95 }}
