@@ -14,7 +14,24 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://ai-email-composer-full-stack.vercel.app",
+];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, curl, same-origin)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked: ${origin}`));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Basic test route

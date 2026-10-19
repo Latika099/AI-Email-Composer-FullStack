@@ -125,7 +125,14 @@ const CreateEmail = () => {
 
   const handleSendEmail = async () => {
     if (!receiverEmail.trim()) {
-      setSendError("Recipient email is required");
+      setSendError("Recipient email address is required.");
+      return;
+    }
+
+    // Basic client-side email format check
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(receiverEmail.trim())) {
+      setSendError(`"${receiverEmail}" is not a valid email address.`);
       return;
     }
 
@@ -142,23 +149,25 @@ const CreateEmail = () => {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          to: receiverEmail,
-          from: senderEmail,
+          to: receiverEmail.trim(),
+          from: senderEmail.trim() || undefined,
           subject: editableSubject,
           body: editableBody,
           emailId: currentEmailId
         })
       });
 
-      const data = await response.json();
+      // Always try to parse JSON; fall back gracefully if the body is empty
+      let data = {};
+      try { data = await response.json(); } catch (_) {}
 
       if (response.ok) {
         setSendSuccess(true);
       } else {
-        setSendError(data?.message || "Failed to send email");
+        setSendError(data?.message || `Server error ${response.status}. Check the backend terminal for details.`);
       }
     } catch (error) {
-      setSendError("Network error. Please try again.");
+      setSendError("Network error — could not reach the server. Is the backend running?");
     } finally {
       setIsSending(false);
     }
@@ -386,28 +395,39 @@ const CreateEmail = () => {
                 <div className="p-10 bg-[#fbfaf8]/50 border-t border-gray-100">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                        <Globe className="w-5 h-5 text-gray-400 group-focus-within:text-violet-500 transition-colors" />
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
+                        Recipient Email <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                          <Globe className="w-5 h-5 text-gray-400 group-focus-within:text-violet-500 transition-colors" />
+                        </div>
+                        <input
+                          type="email"
+                          placeholder="e.g. name@example.com"
+                          value={receiverEmail}
+                          onChange={(e) => setReceiverEmail(e.target.value)}
+                          required
+                          className="w-full pl-14 pr-6 py-5 rounded-[1.75rem] border border-gray-100/50 bg-white focus:ring-4 focus:ring-violet-500/10 focus:border-violet-400 transition-all text-sm font-bold shadow-sm"
+                        />
                       </div>
-                      <input
-                        type="email"
-                        placeholder="Recipient's Digital Address"
-                        value={receiverEmail}
-                        onChange={(e) => setReceiverEmail(e.target.value)}
-                        className="w-full pl-14 pr-6 py-5 rounded-[1.75rem] border border-gray-100/50 bg-white focus:ring-4 focus:ring-violet-500/10 focus:border-violet-400 transition-all text-sm font-bold shadow-sm"
-                      />
                     </div>
                     <div className="relative group">
-                      <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-                        <User className="w-5 h-5 text-gray-400 group-focus-within:text-violet-500 transition-colors" />
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">
+                        Sender Name / Email <span className="text-gray-300">(Optional)</span>
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                          <User className="w-5 h-5 text-gray-400 group-focus-within:text-violet-500 transition-colors" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Your name or email (optional)"
+                          value={senderEmail}
+                          onChange={(e) => setSenderEmail(e.target.value)}
+                          className="w-full pl-14 pr-6 py-5 rounded-[1.75rem] border border-gray-100/50 bg-white focus:ring-4 focus:ring-violet-500/10 focus:border-violet-400 transition-all text-sm font-bold shadow-sm"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        placeholder="Premium Sender Identity (Optional)"
-                        value={senderEmail}
-                        onChange={(e) => setSenderEmail(e.target.value)}
-                        className="w-full pl-14 pr-6 py-5 rounded-[1.75rem] border border-gray-100/50 bg-white focus:ring-4 focus:ring-violet-500/10 focus:border-violet-400 transition-all text-sm font-bold shadow-sm"
-                      />
                     </div>
                   </div>
 
@@ -428,10 +448,10 @@ const CreateEmail = () => {
                     <motion.div 
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center gap-4 text-red-600 bg-red-50 px-8 py-5 rounded-[2rem] mb-8 border border-red-100/50 shadow-sm"
+                      className="flex items-start gap-4 text-red-600 bg-red-50 px-8 py-5 rounded-[2rem] mb-8 border border-red-100/50 shadow-sm"
                     >
-                      <AlertCircle className="w-5 h-5 text-red-500" />
-                      <span className="text-sm font-black uppercase tracking-widest">{sendError}</span>
+                      <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                      <span className="text-sm font-semibold leading-relaxed break-words">{sendError}</span>
                     </motion.div>
                   )}
 

@@ -129,9 +129,18 @@ export const sendEmailAction = async (req, res) => {
       });
     }
 
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(to.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: `"${to}" is not a valid email address.`,
+      });
+    }
+
     await sendMail({
       from, // Optional, defaults to SMTP_USER
-      to,
+      to: to.trim(),
       subject,
       text: body,
     });
@@ -143,20 +152,21 @@ export const sendEmailAction = async (req, res) => {
       action: "sent",
     });
 
-
     res.status(200).json({
       success: true,
       message: "Email sent successfully!",
     });
   } catch (error) {
-    console.error("Email Send Controller Error:", error);
+    console.error("[Controller] Email Send Error:", error.message);
+    // Return the human-readable message from the mail service if available
+    const clientMessage = error.friendlyMessage || error.message || "Failed to send email";
     res.status(500).json({
       success: false,
-      message: "Failed to send email",
-      error: error.message,
+      message: clientMessage,
     });
   }
 };
+
 
 
 // GET /api/email - Get all emails
